@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "camera-client-pedestrian-counting"
+version = "0.1.0"
+description = ""
+authors = ["Sara González Ramírez <saragonza.lez0608@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+opencv-python = "^4.9.0.80"
+ultralytics = "^8.1.1"
+numpy = "^1.26.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "camera_client_pedestrian_counting.main:main" 
