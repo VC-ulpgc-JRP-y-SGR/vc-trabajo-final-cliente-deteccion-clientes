@@ -1,5 +1,6 @@
 from .control import PersonCounterController
 from .camera import CameraServer
+import threading
 import cv2
 
 def main():
@@ -12,7 +13,9 @@ def main():
         ret, frame = cap.read()
         if not ret: break
         frame = control.read(frame)
-        camera.send_frame(frame)
+        # send this in a thread
+        thread = threading.Thread(target = camera.send_frame, args = (frame,))
+        thread.start()
 
         if cv2.waitKey(20) == 27: break
 

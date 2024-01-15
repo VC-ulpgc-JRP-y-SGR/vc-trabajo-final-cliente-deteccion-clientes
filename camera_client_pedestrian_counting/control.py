@@ -1,4 +1,5 @@
 from camera_client_pedestrian_counting.notificator import notify_client_entered, notify_client_leave
+import threading
 from .pedestrian_tracker import YOLOPersonDetector, Person
 from numpy import array
 import numpy as np
@@ -66,10 +67,12 @@ class PersonCounterController():
     def count(self):
         if self.person.is_going_right(): 
             self.counter += 1
-            notify_client_entered()
+            thread = threading.Thread(target = notify_client_entered)
+            thread.start()
         elif self.person.is_going_left(): 
             self.counter -= 1
-            notify_client_leave()
+            thread = threading.Thread(target = notify_client_leave)
+            thread.start()
 
     def track(self, detections: list) -> None:
         if len(detections) == 0: self.person = None
