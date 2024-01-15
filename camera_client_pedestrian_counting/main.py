@@ -4,7 +4,7 @@ import cv2
 
 def main():
     control = PersonCounterController(width = 1020, height = 600, limit = 20, max_age = 10, model = "./yolo/yolov8n-seg.pt")
-    camera = CameraServer(ip="127.0.0.1", port=5006)
+    camera = CameraServer(ip="172.20.10.3", port=5006)
     camera.start()
 
     cap = cv2.VideoCapture(0)
