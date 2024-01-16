@@ -51,6 +51,7 @@ def main():
     finally:
         exit_event.set()
         sending_thread.join()
+        
         cap.release()
         cv2.destroyAllWindows()
 
