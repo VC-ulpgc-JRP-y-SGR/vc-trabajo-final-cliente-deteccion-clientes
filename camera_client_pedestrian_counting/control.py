@@ -32,16 +32,25 @@ class Painter():
         cv2.putText(img, "IN", (line_right[1][0] + 20, line_right[1][1] - 20), self.font, 0.5, (0, 0, 255), self.font_size)
         return img
     
-    def paint_counter(self, img: array, counter: int) -> array:
+    def paint_state(self, img: array, state: str) -> array:
         x, y = 30, 30
+        x1, y1, x2, y2 = x-5, y+5, x+150, y-15
+        cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 0), -1)
+        cv2.putText(img, "Estado: " + state, (x, y), self.font, 0.5, (255, 255, 255), self.font_size)
+        return img
+    
+    def paint_debug(self, img: array, counter: int, debug_mode: bool) -> array:
+        if not debug_mode: return img
+        x, y = 30, 60
         x1, y1, x2, y2 = x-5, y+5, x+150, y-15
         cv2.rectangle(img, (x1, y1), (x2, y2), (0, 0, 0), -1)
         cv2.putText(img, "Contador: " + str(counter), (x, y), self.font, 0.5, (255, 255, 255), self.font_size)
         return img
     
-    def paint_HUB(self, img: array, left: list, right: list, counter: int) -> array:
+    def paint_HUB(self, img: array, left: list, right: list, state: str, counter: int, debug_mode: bool) -> array:
         img = self.paint_lines(img, left, right)
-        img = self.paint_counter(img, counter)
+        img = self.paint_state(img, state)
+        img = self.paint_debug(img, counter, debug_mode)
         return img
 
     def paint_person(self, img: array, person: Person) -> array:
@@ -52,7 +61,7 @@ class Painter():
         return img
 
 class PersonCounterController():
-    def __init__(self, width: int, height: int, limit: int, max_age: int, model: str):
+    def __init__(self, width: int, height: int, limit: int, model: str, debug_mode: bool = False):
         self.detector = YOLOPersonDetector(model)
         self.painter = Painter()
         
@@ -60,24 +69,30 @@ class PersonCounterController():
         self.height = height
         self.limit = int(limit*width/100)
         
-        self.max_age = max_age
-        self.counter = 0
+        self.state = ""
         self.person = None
+        self.debug_mode = debug_mode
+        self.counter = 0
+
 
     def count(self):
         n = self.person.get_dir()
         self.counter += n
         if n == 1: 
+            self.state = "IN"
             thread = threading.Thread(target = notify_client_entered)
             thread.start()
         elif n == -1: 
+            self.state = "OUT"
             thread = threading.Thread(target = notify_client_leave)
             thread.start()
 
     def track(self, detections: list) -> None:
-        if len(detections) == 0: self.person = None
+        if len(detections) == 0: 
+            self.person = None
+            self.state = ""
         for detection in detections:
-            if self.person == None: self.person = Person(detection, self.max_age)
+            if self.person == None: self.person = Person(detection)
             else:
                 self.person.update_coords(detection)
                 self.person.calculate_dir(self.limit, self.width - self.limit)
@@ -86,11 +101,14 @@ class PersonCounterController():
         img = cv2.resize(img, (self.width, self.height))
         detections = self.detector.predict(img)
 
-        img = self.painter.paint_HUB(img, [(self.limit, 0), (self.limit, self.height)], [(self.width - self.limit, 0), (self.width - self.limit, self.height)], self.counter)
+        left = [(self.limit, 0), (self.limit, self.height)]
+        right = [(self.width - self.limit, 0), (self.width - self.limit, self.height)]
+        img = self.painter.paint_HUB(img, left, right, self.state, self.counter, self.debug_mode)
         self.track(detections)
         if self.person != None: 
             self.count()
             img = self.painter.paint_person(img, self.person)
-            img = self.painter.paint_counter(img, self.counter)
+            img = self.painter.paint_state(img, self.state)
+            img = self.painter.paint_debug(img, self.counter, self.debug_mode)
 
         return img

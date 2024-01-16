@@ -2,22 +2,12 @@ from ultralytics import YOLO
 from numpy import array
 
 class Person():
-    def __init__(self, bbox: tuple, max_age: int):
+    def __init__(self, bbox: tuple):
         self.bbox = bbox
         self.center = (int((bbox[0] + bbox[2])//2), int((bbox[1] + bbox[3])/2))
         self.tracks = []
         self.dir = 0
         self.state = 0
-        self.age = 0
-        self.max_age = max_age
-        self.done = False
-    
-    def age_one(self) -> None:
-        if self.age < self.max_age: self.age += 1
-        else: self.done = True
-
-    def is_time_out(self) -> bool:
-        return self.done
 
     def update_coords(self, bbox: tuple) -> None:
         self.tracks.append(int(self.center[0]))

@@ -2,7 +2,7 @@ import cv2
 from .control  import PersonCounterController
 
 def main():
-    control = PersonCounterController(width = 1020, height = 600, limit = 40, max_age = 10, model = "./yolo/yolov8n-seg.pt")
+    control = PersonCounterController(width = 1020, height = 600, limit = 30, model = "./yolo/yolov8n-seg.pt", debug_mode = True)
 
     cap = cv2.VideoCapture(0)
     while True:
