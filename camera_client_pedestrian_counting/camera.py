@@ -10,6 +10,7 @@ class CameraServer:
         self.buffer_size = buffer_size
         self.server_socket = None
         self.cap = None
+        self.is_connected = False
 
     def start(self):
         # Set up logging
@@ -23,6 +24,7 @@ class CameraServer:
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((TCP_IP, TCP_PORT))
         self.server_socket.listen(1)
+        self.is_connected = True
 
     def close(self):
         self.server_socket.close()
