@@ -18,7 +18,7 @@ class Painter():
         img[y1:y2, x1:x2] = res
 
         cv2.line(img, line_left[0], line_left[1], (255, 0, 0), 2)
-        cv2.putText(img, "LEFT", (line_left[1][0] - 50, line_left[1][1] - 20), self.font, 0.5, (255, 0, 0), self.font_size)
+        cv2.putText(img, "OUT", (line_left[1][0] - 50, line_left[1][1] - 20), self.font, 0.5, (255, 0, 0), self.font_size)
         
         w = x2 - x1
         n = w/15
@@ -29,7 +29,7 @@ class Painter():
             x += n
 
         cv2.line(img, line_right[0], line_right[1], (0, 0, 255), 2)
-        cv2.putText(img, "RIGHT", (line_right[1][0] + 20, line_right[1][1] - 20), self.font, 0.5, (0, 0, 255), self.font_size)
+        cv2.putText(img, "IN", (line_right[1][0] + 20, line_right[1][1] - 20), self.font, 0.5, (0, 0, 255), self.font_size)
         return img
     
     def paint_counter(self, img: array, counter: int) -> array:
@@ -65,12 +65,12 @@ class PersonCounterController():
         self.person = None
 
     def count(self):
-        if self.person.is_going_right(): 
-            self.counter += 1
+        n = self.person.get_dir()
+        self.counter += n
+        if n == 1: 
             thread = threading.Thread(target = notify_client_entered)
             thread.start()
-        elif self.person.is_going_left(): 
-            self.counter -= 1
+        elif n == -1: 
             thread = threading.Thread(target = notify_client_leave)
             thread.start()
 

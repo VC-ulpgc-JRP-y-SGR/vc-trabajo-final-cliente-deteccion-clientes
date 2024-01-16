@@ -7,6 +7,7 @@ class Person():
         self.center = (int((bbox[0] + bbox[2])//2), int((bbox[1] + bbox[3])/2))
         self.tracks = []
         self.dir = 0
+        self.state = 0
         self.age = 0
         self.max_age = max_age
         self.done = False
@@ -19,23 +20,26 @@ class Person():
         return self.done
 
     def update_coords(self, bbox: tuple) -> None:
-        self.tracks.append(self.center)
+        self.tracks.append(int(self.center[0]))
         self.bbox = bbox
-        self.center = (int((bbox[0] + bbox[2])//2), int((bbox[1] + bbox[3])/2))
+        self.center = (int((bbox[0] + bbox[2])//2), int((bbox [1] + bbox[3])/2))
 
     def calculate_dir(self, x_left: int, x_right: int) -> None:
-        if len(self.tracks) >= 2 and self.dir == 0:
-            if self.tracks[-1][0] > x_right and self.tracks[-2][0] <= x_right:
-                self.dir = 1
-            elif self.tracks[-1][0] < x_left and self.tracks[-2][0] >= x_left:
-                self.dir = -1
-        else: self.dir = 0
+        if len(self.tracks) >= 2:
+            if self.tracks[-1] > x_right and self.tracks[-2] <= x_right:
+                if self.dir != 1:
+                    self.dir = 1
+                    self.state = 1
+            elif self.tracks[-1] < x_left and self.tracks[-2] >= x_left:
+                if self.dir != -1:
+                    self.dir = -1
+                    self.state = 1
 
-    def is_going_right(self) -> bool:
-        return self.dir == 1
-    
-    def is_going_left(self) -> bool:
-        return self.dir == -1
+    def get_dir(self) -> int:
+        if self.state == 1: 
+            self.state = 0
+            return self.dir
+        else: return 0
 
 class YOLOPersonDetector():
     def __init__(self, model):
