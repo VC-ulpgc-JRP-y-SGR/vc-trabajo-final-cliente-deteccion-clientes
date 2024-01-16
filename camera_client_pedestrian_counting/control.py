@@ -65,12 +65,12 @@ class PersonCounterController():
         self.person = None
 
     def count(self):
-        if self.person.is_going_right(): 
-            self.counter += 1
+        n = self.person.get_dir()
+        self.counter += n
+        if n == 1: 
             thread = threading.Thread(target = notify_client_entered)
             thread.start()
-        elif self.person.is_going_left(): 
-            self.counter -= 1
+        elif n == -1: 
             thread = threading.Thread(target = notify_client_leave)
             thread.start()
 

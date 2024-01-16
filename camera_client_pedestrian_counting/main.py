@@ -27,14 +27,14 @@ def send_frames(frame_queue, exit_event, camera_server_info):
 
 def main():
     # Initialize control
-    control = PersonCounterController(width=1020, height=600, limit=20, max_age=10, model="./yolo/yolov8n-seg.pt")
+    control = PersonCounterController(width=1020, height=600, limit=40, max_age=10, model="./yolo/yolov8n-seg.pt")
 
     # Initialize frame queue and exit flag
     frame_queue = queue.Queue()
     exit_event = threading.Event()
 
     # Start the frame sending process
-    camera_server_info = ("192.168.8.101", 5006)
+    camera_server_info = ("192.168.8.100", 5006)
     sending_process = threading.Thread(target=send_frames, args=(frame_queue, exit_event, camera_server_info))
     sending_process.start()
 
