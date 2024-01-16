@@ -35,7 +35,7 @@ def main():
     exit_flag = multiprocessing.Value('i', 0)
 
     # Start the frame sending process
-    camera_server_info = ("127.0.0.1", 5006)
+    camera_server_info = ("192.168.8.101", 5006)
     sending_process = multiprocessing.Process(target=send_frames, args=(frame_queue, exit_flag, camera_server_info))
     sending_process.start()
 
