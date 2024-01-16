@@ -1,15 +1,18 @@
 import cv2
-import multiprocessing as mp
-import numpy as np
-import ctypes
 from .control  import PersonCounterController
-from camera_client_pedestrian_counting.camera import CameraServer
 
-video = cv2.VideoCapture(0)
+def main():
+    control = PersonCounterController(width = 1020, height = 600, limit = 40, max_age = 10, model = "./yolo/yolov8n-seg.pt")
 
-while True:
-    ret, frame = video.read()
-    frame = PersonCounterController(frame.size[0], frame.size[1], 10, "./yolo/yolov8n-seg.pt").read(frame)
-    cv2.imshow('frame', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    cap = cv2.VideoCapture(0)
+    while True:
+        ret, frame = cap.read()
+        if not ret: break
+        frame = control.read(frame)
+        cv2.imshow("detections", frame)
+        if cv2.waitKey(20) == 27: break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+main()
