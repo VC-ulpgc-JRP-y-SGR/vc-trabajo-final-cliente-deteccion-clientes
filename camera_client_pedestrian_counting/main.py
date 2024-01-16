@@ -6,7 +6,7 @@ from .control  import PersonCounterController
 
 from camera_client_pedestrian_counting.camera import CameraServer
 
-camera_server_info = ("127.0.0.1", 5006)
+camera_server_info = ("192.168.8.100", 5006)
 frame_shape = (480, 640, 3)  # Example frame shape
 frame_size = frame_shape[0] * frame_shape[1] * frame_shape[2]
 queue_size = 60  # Number of frames in the pool
@@ -42,8 +42,7 @@ def cam_server(queue):
         if queue.empty():
             continue
         frame = queue.get()
-        camera.send_frame(frame)
-
+        # camera.send_frame(frame)
         print(frame)
 
 def main():
