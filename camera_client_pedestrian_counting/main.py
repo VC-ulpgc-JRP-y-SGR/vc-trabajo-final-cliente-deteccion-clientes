@@ -35,7 +35,7 @@ def main():
 
     # Start the frame sending process
     camera_server_info = ("192.168.8.101", 5006)
-    sending_process = multiprocessing.Process(target=send_frames, args=(frame_queue, exit_flag, camera_server_info))
+    sending_process = threading.Thread(target=send_frames, args=(frame_queue, exit_event, camera_server_info))
     sending_process.start()
 
     # Main loop to capture and process frames
@@ -50,7 +50,7 @@ def main():
             if cv2.waitKey(20) == 27: break  # Escape key pressed
     finally:
         exit_event.set()
-        sending_thread.join()
+        sending_process.join()
         
         cap.release()
         cv2.destroyAllWindows()
