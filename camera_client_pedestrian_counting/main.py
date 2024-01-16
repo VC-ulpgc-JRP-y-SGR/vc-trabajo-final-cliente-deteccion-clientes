@@ -11,8 +11,6 @@ frame_shape = (480, 640, 3)  # Example frame shape
 frame_size = frame_shape[0] * frame_shape[1] * frame_shape[2]
 queue_size = 60  # Number of frames in the pool
 
-
-
 def create_shared_frame():
     # Create a shared array for each frame
     return mp.Array(ctypes.c_uint8, frame_size, lock=False)
